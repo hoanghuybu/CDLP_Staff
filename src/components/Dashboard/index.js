@@ -59,7 +59,7 @@ function DashBoard() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -87,7 +87,7 @@ function DashBoard() {
     const fecthPostCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count',
                 {
                     method: 'GET',
                     headers: {
@@ -111,7 +111,7 @@ function DashBoard() {
 
     const fetchListAccount = async () => {
         try {
-            const response = await fetch('https://beprn231catdoglover20231017210252.azurewebsites.net/api/Account', {
+            const response = await fetch('https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

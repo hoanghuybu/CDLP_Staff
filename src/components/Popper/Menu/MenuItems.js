@@ -19,7 +19,7 @@ function MenuItems({ data, onClick }) {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/Logout/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/Logout/${refreshToken}`,
                     {
                         method: 'POST',
                         headers: {

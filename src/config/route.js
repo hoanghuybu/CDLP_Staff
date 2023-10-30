@@ -8,6 +8,7 @@ const route = {
     live: '/post',
     details: '/details',
     userDetails: '/UserDetails',
+    report: '/report',
 };
 
 export default route;

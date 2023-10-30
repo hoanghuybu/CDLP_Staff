@@ -1,12 +1,11 @@
-import './Following.scss';
-import { Dropdown } from 'react-bootstrap';
+import './Report.scss';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BallTriangle } from 'react-loader-spinner';
 
-function Following() {
-    const [listAccount, setListAccount] = useState([]);
+function Report() {
     const [isLoading, setIsLoading] = useState(true);
+    const [listReport, setListReport] = useState([]);
     const navigate = useNavigate();
 
     const handleRefresh = async () => {
@@ -39,19 +38,21 @@ function Following() {
         }
     };
 
-    const fetchListAccount = async () => {
+    const fecthListReport = async () => {
         try {
-            const response = await fetch('https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/$metadata#Reports',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
                 },
-            });
-            if (response.status === 200) {
+            );
+            if (response.ok) {
                 const responseData = await response.json();
-                const filteredAccounts = responseData.filter((account) => account.roleId === 1);
-                setListAccount(filteredAccounts);
+                setListReport(responseData.value);
             }
         } catch (error) {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -64,19 +65,14 @@ function Following() {
         }
     };
 
-    const handleEditClick = (user) => {
-        navigate('/UserDetails', { state: { user: user } });
-    };
-
     useEffect(() => {
-        fetchListAccount();
+        fecthListReport();
     }, []);
-
     return (
         <div className="content-wrapper">
             <div className="ontainer-xxl flex-grow-1 container-p-y">
                 <h4 className="fw-bold py-3 mb-4">
-                    <span className="text-muted fw-light">Staff/</span> List User
+                    <span className="text-muted fw-light">Report/</span> List Report
                 </h4>
                 <div className="card">
                     <div className="table-responsive text-nowrap">
@@ -98,43 +94,18 @@ function Following() {
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Create Day</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Reporter</th>
+                                        <th>Reported Person</th>
+                                        <th>Content</th>
                                     </tr>
                                 </thead>
                                 <tbody className="table-border-bottom-0">
-                                    {listAccount?.map((user, index) => (
-                                        <tr key={user.id}>
+                                    {listReport?.map((report, index) => (
+                                        <tr key={index}>
                                             <td>{index + 1}</td>
-                                            <td>{user.fullName}</td>
-                                            <td>{user.email}</td>
-                                            <td>{user?.createDate.slice(0, 10)}</td>
-                                            <td>
-                                                <span
-                                                    className={`badge ${
-                                                        user.status === true ? 'bg-label-success' : 'bg-label-danger'
-                                                    } me-1`}
-                                                >
-                                                    {user.status === true ? 'Active' : 'InActive'}
-                                                </span>
-                                            </td>
-
-                                            <td>
-                                                <Dropdown>
-                                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                                        Select Actions
-                                                    </Dropdown.Toggle>
-
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item onClick={() => handleEditClick(user)}>
-                                                            Edit
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </td>
+                                            <td>{report?.reporter?.fullName}</td>
+                                            <td>{report?.reportedPerson?.fullName}</td>
+                                            <td>{report?.content}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -147,4 +118,4 @@ function Following() {
     );
 }
 
-export default Following;
+export default Report;

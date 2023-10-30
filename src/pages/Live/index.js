@@ -9,10 +9,40 @@ function Live() {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    const handleRefresh = async () => {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (refreshToken) {
+            try {
+                const response = await fetch(
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    sessionStorage.setItem('accessToken', data.accessToken);
+                    sessionStorage.setItem('refreshToken', data.refreshToken);
+                    window.location.reload();
+                } else {
+                    console.error('Error refreshing token');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        } else {
+            navigate('/');
+        }
+    };
+
     const fecthListPost = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts?$expand=Gifts&$expand=Products&$expand=Services',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts?$expand=Gifts&$expand=Products&$expand=Services',
                 {
                     method: 'GET',
                     headers: {
@@ -26,7 +56,11 @@ function Live() {
                 setListPost(responseData.value);
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -67,7 +101,6 @@ function Live() {
                                     <tr>
                                         <th>STT</th>
                                         <th>Title</th>
-                                        {/* <th>Content</th> */}
                                         <th>Type</th>
                                         <th>Owner Name</th>
                                         <th>Create Date</th>
@@ -80,7 +113,6 @@ function Live() {
                                         <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{post?.Title}</td>
-                                            {/* <td style={{ whiteSpace: 'pre-wrap' }}>{post?.Content}</td> */}
                                             <td>{post?.Type}</td>
                                             <td>{post?.Owner?.FullName}</td>
                                             <td>{post?.CreateDate.slice(0, 10)}</td>
@@ -103,7 +135,6 @@ function Live() {
                                                         <Dropdown.Item onClick={() => handleEditClick(post)}>
                                                             Edit
                                                         </Dropdown.Item>
-                                                        {/* <Dropdown.Item href="/details">Delete</Dropdown.Item> */}
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </td>

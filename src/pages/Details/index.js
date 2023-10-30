@@ -17,7 +17,7 @@ function Details() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -45,7 +45,7 @@ function Details() {
     const handleActivePost = async () => {
         try {
             const response = await fetch(
-                `https://beprn231cardogloverodata20231024085350.azurewebsites.net/Posts/Enable/${post.PostId}`,
+                `https://beprn231cardogloverodata20231030114819.azurewebsites.net/Posts/Enable/${post.PostId}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -69,7 +69,7 @@ function Details() {
     const handleInactivePost = async () => {
         try {
             const response = await fetch(
-                `https://beprn231cardogloverodata20231024085350.azurewebsites.net/Posts/Disable/${post.PostId}`,
+                `https://beprn231cardogloverodata20231030114819.azurewebsites.net/Posts/Disable/${post.PostId}`,
                 {
                     method: 'PUT',
                     headers: {

@@ -2,11 +2,12 @@ import './Home.scss';
 import React, { useState, useEffect } from 'react';
 import images from '~/assets/images';
 import { BiDotsVerticalRounded, BiDollar, BiBox, BiGift } from 'react-icons/bi';
+import { GrDocumentImage } from 'react-icons/gr';
 import { MdRoomService } from 'react-icons/md';
 import DashBoard from '~/components/Dashboard';
 import GrowChart from '~/components/Dashboard/GrowChart';
 import OrderStatisticsChart from '~/components/Dashboard/OrderStatisticsChart';
-// import { useRefresh } from '~/hooks';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const [listAccount, setListAccount] = useState([]);
@@ -14,13 +15,16 @@ function Home() {
     const [postGiftTotal, setPostGiftTotal] = useState();
     const [postServiceTotal, setPostServiceTotal] = useState();
     const [postProductTotal, setPostProductTotal] = useState();
+    const [newUserNum, setNewUserNum] = useState();
+    const [growPost, setGrowPost] = useState({});
+    const navigate = useNavigate();
 
     const handleRefresh = async () => {
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -48,7 +52,7 @@ function Home() {
     const fecthPostCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count',
                 {
                     method: 'GET',
                     headers: {
@@ -73,7 +77,7 @@ function Home() {
     const fecthPostGiftCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27gift%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27gift%27',
                 {
                     method: 'GET',
                     headers: {
@@ -97,7 +101,7 @@ function Home() {
     const fecthPostServiceCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27service%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27service%27',
                 {
                     method: 'GET',
                     headers: {
@@ -121,7 +125,7 @@ function Home() {
     const fecthPostProductCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27product%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27product%27',
                 {
                     method: 'GET',
                     headers: {
@@ -145,7 +149,7 @@ function Home() {
 
     const fetchListAccount = async () => {
         try {
-            const response = await fetch('https://beprn231catdoglover20231017210252.azurewebsites.net/api/Account', {
+            const response = await fetch('https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,6 +169,56 @@ function Home() {
         }
     };
 
+    const fetchNewUserNum = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account/countNewUserToday',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setNewUserNum(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const fecthDataGrow = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231catdoglover20231030132717.azurewebsites.net/api/Posts/getStatitic',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setGrowPost(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
     const filteredAccounts = listAccount.filter((account) => account.roleId === 1);
 
     useEffect(() => {
@@ -173,6 +227,8 @@ function Home() {
         fecthPostGiftCount();
         fecthPostProductCount();
         fecthPostServiceCount();
+        fetchNewUserNum();
+        fecthDataGrow();
     }, []);
     return (
         <div className="content-wrapper">
@@ -185,8 +241,8 @@ function Home() {
                                     <div className="card-body">
                                         <h5 className="card-title text-primary">Welcome Staff! 🎉</h5>
                                         <p className="mb-4">
-                                            Your Page have <span className="fw-bold">10</span> new user today. Check
-                                            post and user.
+                                            Your Page have <span className="fw-bold">{newUserNum}</span> new user today.
+                                            Check post and user.
                                         </p>
                                     </div>
                                 </div>
@@ -287,43 +343,32 @@ function Home() {
                                     <DashBoard />
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card-body">
-                                        {/* <div className="text-center">
-                                            <button
-                                                className="btn btn-sm btn-outline-primary"
-                                                type="button"
-                                                id="growthReportId"
-                                                data-bs-toggle="dropdown"
-                                                aria-haspopup="true"
-                                                aria-expanded="false"
-                                            >
-                                                2022
-                                            </button>
-                                        </div> */}
+                                    <div className="card-body d-flex justify-content-center fw-bold">
+                                        Report Post Today
                                     </div>
                                     <GrowChart />
                                     <div className="text-center fw-semibold pt-3 mb-2"> Post today</div>
-                                    <div className="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
+                                    <div className="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-around">
                                         <div className="d-flex">
                                             <div className="me-2">
                                                 <span className="badge bg-label-primary p-2">
-                                                    <BiDollar className="text-primary" />
+                                                    <GrDocumentImage className="text-primary" />
                                                 </span>
                                             </div>
                                             <div className="d-flex flex-column">
                                                 <small>Today</small>
-                                                <h6 className="mb-0">100 post</h6>
+                                                <h6 className="mb-0">{growPost.postToday} post</h6>
                                             </div>
                                         </div>
                                         <div className="d-flex">
                                             <div className="me-2">
                                                 <span className="badge bg-label-primary p-2">
-                                                    <BiDollar className="text-primary" />
+                                                    <GrDocumentImage className="text-primary" />
                                                 </span>
                                             </div>
                                             <div className="d-flex flex-column">
-                                                <small>Yesterday</small>
-                                                <h6 className="mb-0">22 post</h6>
+                                                <small>Total</small>
+                                                <h6 className="mb-0">{growPost.postTotal} post</h6>
                                             </div>
                                         </div>
                                     </div>

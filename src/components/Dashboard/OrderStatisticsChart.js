@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function OrderStatisticsChart() {
     let cardColor, headingColor, axisColor;
+    const navigate = useNavigate();
 
     const [postGiftTotal, setPostGiftTotal] = useState();
     const [postServiceTotal, setPostServiceTotal] = useState();
@@ -82,7 +84,7 @@ function OrderStatisticsChart() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -109,7 +111,7 @@ function OrderStatisticsChart() {
     const fecthPostGiftCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27gift%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27gift%27',
                 {
                     method: 'GET',
                     headers: {
@@ -133,7 +135,7 @@ function OrderStatisticsChart() {
     const fecthPostServiceCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27service%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27service%27',
                 {
                     method: 'GET',
                     headers: {
@@ -157,7 +159,7 @@ function OrderStatisticsChart() {
     const fecthPostProductCount = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27product%27',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27product%27',
                 {
                     method: 'GET',
                     headers: {
@@ -186,7 +188,6 @@ function OrderStatisticsChart() {
     }, []);
 
     useEffect(() => {
-        // Update the 'series' array whenever the state changes
         const newSeries = [postGiftTotal, postServiceTotal, postProductTotal];
         setSeries(newSeries);
     }, [postGiftTotal, postServiceTotal, postProductTotal]);

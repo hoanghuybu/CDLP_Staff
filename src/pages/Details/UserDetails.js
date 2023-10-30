@@ -25,7 +25,7 @@ function UserDetails() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -53,7 +53,7 @@ function UserDetails() {
     const fetchListPostById = async () => {
         try {
             const response = await fetch(
-                `https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts?$filter=OwnerId eq ${user?.accountId}`,
+                `https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Posts?$filter=OwnerId eq ${user?.accountId}`,
                 {
                     method: 'GET',
                     headers: {
@@ -80,24 +80,75 @@ function UserDetails() {
     const handleUpdateUser = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('AccountId', user.accountId);
-        formData.append('FullName', fullNameRef.current.value);
-        formData.append('Address', addressRef.current.value);
-        formData.append('DateOfBirth', dateOfBirthRef.current.value);
-        formData.append('Email', emailRef.current.value);
-        formData.append('Phone', phoneRef.current.value);
-        formData.append('Description', descriptionRef.current.value);
+        const updatedUser = {
+            accountId: user.accountId,
+            email: emailRef.current.value,
+            fullName: fullNameRef.current.value,
+            dateOfBirth: dateOfBirthRef.current.value === '' ? null : dateOfBirthRef.current.value,
+            phone: phoneRef.current.value,
+            address: addressRef.current.value,
+            avatarLink: null,
+            description: descriptionRef.current.value,
+        };
 
         try {
             const response = await fetch(
-                'https://beprn231catdoglover20231017210252.azurewebsites.net/api/Account/UpdateProfile',
+                'https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account/UpdateProfile',
                 {
                     method: 'PUT',
                     headers: {
+                        'Content-Type': 'application/json',
                         Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
                     },
-                    body: formData,
+                    body: JSON.stringify(updatedUser),
+                },
+            );
+            if (response.status === 200) {
+                setIsSuccess(true);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const handleUnbanUser = async () => {
+        try {
+            const response = await fetch(
+                `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account/Unban?id=${user.accountId}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                setIsSuccess(true);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const handleBanUser = async () => {
+        try {
+            const response = await fetch(
+                `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account/Ban?id=${user.accountId}&reason=${banReasonRef.current.value}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
                 },
             );
             if (response.status === 200) {
@@ -315,9 +366,6 @@ function UserDetails() {
                                                             @gmail.com
                                                         </span>
                                                     </div>
-                                                    {/* <div className="form-text">
-                                                        You can use letters, numbers & periods
-                                                    </div> */}
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -396,13 +444,14 @@ function UserDetails() {
                                                                 <textarea
                                                                     id="basic-default-message"
                                                                     className="form-control"
+                                                                    ref={banReasonRef}
                                                                 ></textarea>
                                                             </div>
                                                         </div>
                                                         <div className="col-sm-6">
                                                             <button
                                                                 type="button"
-                                                                // onClick={handleInactivePost}
+                                                                onClick={handleBanUser}
                                                                 className="btn btn-danger"
                                                             >
                                                                 Ban
@@ -413,7 +462,7 @@ function UserDetails() {
                                                     <div className="col-sm-6">
                                                         <button
                                                             type="button"
-                                                            // onClick={handleActivePost}
+                                                            onClick={handleUnbanUser}
                                                             className="btn btn-success"
                                                         >
                                                             Unban
