@@ -2,12 +2,10 @@ import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 function GrowChart() {
-    let cardColor, headingColor, axisColor, borderColor;
+    let cardColor, headingColor;
 
     cardColor = '#fff';
     headingColor = '#566a7f';
-    axisColor = '#a1acb8';
-    borderColor = '#eceef1';
     const state = {
         series: [78],
         options: {

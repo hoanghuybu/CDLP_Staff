@@ -1,11 +1,179 @@
 import './Home.scss';
+import React, { useState, useEffect } from 'react';
 import images from '~/assets/images';
-import { BiDotsVerticalRounded, BiUpArrowAlt, BiDollar, BiMobileAlt, BiCloset, BiHomeAlt } from 'react-icons/bi';
+import { BiDotsVerticalRounded, BiDollar, BiBox, BiGift } from 'react-icons/bi';
+import { MdRoomService } from 'react-icons/md';
 import DashBoard from '~/components/Dashboard';
 import GrowChart from '~/components/Dashboard/GrowChart';
 import OrderStatisticsChart from '~/components/Dashboard/OrderStatisticsChart';
+// import { useRefresh } from '~/hooks';
 
 function Home() {
+    const [listAccount, setListAccount] = useState([]);
+    const [postTotal, setPostTotal] = useState();
+    const [postGiftTotal, setPostGiftTotal] = useState();
+    const [postServiceTotal, setPostServiceTotal] = useState();
+    const [postProductTotal, setPostProductTotal] = useState();
+
+    const handleRefresh = async () => {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (refreshToken) {
+            try {
+                const response = await fetch(
+                    `https://beprn231catdoglover20231017210252.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    sessionStorage.setItem('accessToken', data.accessToken);
+                    sessionStorage.setItem('refreshToken', data.refreshToken);
+                    window.location.reload();
+                } else {
+                    console.error('Error refreshing token');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        } else {
+            navigate('/');
+        }
+    };
+
+    const fecthPostCount = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setPostTotal(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const fecthPostGiftCount = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27gift%27',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setPostGiftTotal(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+    const fecthPostServiceCount = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27service%27',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setPostServiceTotal(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+    const fecthPostProductCount = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts/$count?$filter=type%20eq%20%27product%27',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setPostProductTotal(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const fetchListAccount = async () => {
+        try {
+            const response = await fetch('https://beprn231catdoglover20231017210252.azurewebsites.net/api/Account', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                },
+            });
+            if (response.status === 200) {
+                const responseData = await response.json();
+                setListAccount(responseData);
+            }
+        } catch (error) {
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                await handleRefresh();
+            } else {
+                console.log(error);
+            }
+        }
+    };
+
+    const filteredAccounts = listAccount.filter((account) => account.roleId === 1);
+
+    useEffect(() => {
+        fecthPostCount();
+        fetchListAccount();
+        fecthPostGiftCount();
+        fecthPostProductCount();
+        fecthPostServiceCount();
+    }, []);
     return (
         <div className="content-wrapper">
             <div className="container-xxl flex-grow-1 container-p-y">
@@ -15,9 +183,9 @@ function Home() {
                             <div className="d-flex align-items-end row">
                                 <div className="col-sm-7">
                                     <div className="card-body">
-                                        <h5 className="card-title text-primary">Welcome Admin! 🎉</h5>
+                                        <h5 className="card-title text-primary">Welcome Staff! 🎉</h5>
                                         <p className="mb-4">
-                                            Your Page have <span className="fw-bold">56%</span> accept post today. Check
+                                            Your Page have <span className="fw-bold">10</span> new user today. Check
                                             post and user.
                                         </p>
                                     </div>
@@ -66,10 +234,10 @@ function Home() {
                                             </div>
                                         </div>
                                         <span className="fw-semibold d-block mb-1">Post</span>
-                                        <h3 className="card-title mb-2">500 Bài</h3>
-                                        <small className="text-success fw-semibold">
+                                        <h3 className="card-title mb-2">{postTotal} post</h3>
+                                        {/* <small className="text-success fw-semibold">
                                             <BiUpArrowAlt /> +72.80%
-                                        </small>
+                                        </small> */}
                                     </div>
                                 </div>
                             </div>
@@ -101,11 +269,11 @@ function Home() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <span className="fw-semibold d-block mb-1">Sales</span>
-                                        <h3 className="card-title mb-2">4,679 VND</h3>
-                                        <small className="text-success fw-semibold">
+                                        <span className="fw-semibold d-block mb-1">User</span>
+                                        <h3 className="card-title mb-2">{filteredAccounts.length} user</h3>
+                                        {/* <small className="text-success fw-semibold">
                                             <BiUpArrowAlt /> +28.42%
-                                        </small>
+                                        </small> */}
                                     </div>
                                 </div>
                             </div>
@@ -120,9 +288,9 @@ function Home() {
                                 </div>
                                 <div className="col-md-4">
                                     <div className="card-body">
-                                        <div className="text-center">
+                                        {/* <div className="text-center">
                                             <button
-                                                class="btn btn-sm btn-outline-primary"
+                                                className="btn btn-sm btn-outline-primary"
                                                 type="button"
                                                 id="growthReportId"
                                                 data-bs-toggle="dropdown"
@@ -131,31 +299,31 @@ function Home() {
                                             >
                                                 2022
                                             </button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <GrowChart />
-                                    <div class="text-center fw-semibold pt-3 mb-2">62% Company Growth</div>
+                                    <div className="text-center fw-semibold pt-3 mb-2"> Post today</div>
                                     <div className="d-flex px-xxl-4 px-lg-2 p-4 gap-xxl-3 gap-lg-1 gap-3 justify-content-between">
                                         <div className="d-flex">
-                                            <div class="me-2">
+                                            <div className="me-2">
                                                 <span className="badge bg-label-primary p-2">
                                                     <BiDollar className="text-primary" />
                                                 </span>
                                             </div>
                                             <div className="d-flex flex-column">
-                                                <small>2022</small>
-                                                <h6 className="mb-0">$32.5k</h6>
+                                                <small>Today</small>
+                                                <h6 className="mb-0">100 post</h6>
                                             </div>
                                         </div>
                                         <div className="d-flex">
                                             <div className="me-2">
-                                                <span class="badge bg-label-primary p-2">
+                                                <span className="badge bg-label-primary p-2">
                                                     <BiDollar className="text-primary" />
                                                 </span>
                                             </div>
                                             <div className="d-flex flex-column">
-                                                <small>2022</small>
-                                                <h6 className="mb-0">$32.5k</h6>
+                                                <small>Yesterday</small>
+                                                <h6 className="mb-0">22 post</h6>
                                             </div>
                                         </div>
                                     </div>
@@ -165,17 +333,17 @@ function Home() {
                     </div>
                     <div className="col-12 col-md-8 col-lg-12  order-3 order-md-2">
                         <div className="card h-100">
-                            <div className="card-header d-flex align-items-center justify-content-between pb-0">
-                                <div className="card-title mb-0">
-                                    <h5 className="m-0 me-2">Order Statistics</h5>
-                                    <small className="text-muted">42.82k Total Sales</small>
+                            <div className="card-header  pb-0">
+                                <div className="card-title d-flex align-items-center justify-content-between mb-0">
+                                    <h5 className="m-0 me-2">Post Statistics</h5>
+                                    <small className="text-muted">{postTotal} Total post</small>
                                 </div>
                             </div>
                             <div className="card-body">
                                 <div className="d-flex justify-content-center align-items-center mb-3">
                                     <div className="d-flex flex-column align-items-center gap-1">
-                                        <h2 className="mb-2">8,258</h2>
-                                        <span>Total Orders</span>
+                                        <h2 className="mb-2">{postTotal}</h2>
+                                        <span>Total Posts</span>
                                     </div>
                                     <OrderStatisticsChart />
                                 </div>
@@ -183,48 +351,48 @@ function Home() {
                                     <li className="d-flex mb-4 pb-1">
                                         <div className="avatar flex-shrink-0 me-3">
                                             <span className="avatar-initial rounded bg-label-primary">
-                                                <BiMobileAlt />
+                                                <BiGift />
                                             </span>
                                         </div>
                                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-start gap-2">
                                             <div className="me-2">
-                                                <h6 className="mb-0">Post</h6>
+                                                <h6 className="mb-0">Type</h6>
                                                 <small className="text-muted">Gift</small>
                                             </div>
                                             <div className="user-progress">
-                                                <small className="fw-semibold">82.5k</small>
+                                                <small className="fw-semibold">{postGiftTotal} post</small>
                                             </div>
                                         </div>
                                     </li>
                                     <li className="d-flex mb-4 pb-1">
                                         <div className="avatar flex-shrink-0 me-3">
                                             <span className="avatar-initial rounded bg-label-success">
-                                                <BiCloset />
+                                                <BiBox />
                                             </span>
                                         </div>
                                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-start gap-2">
                                             <div className="me-2">
-                                                <h6 className="mb-0">Post</h6>
+                                                <h6 className="mb-0">Type</h6>
                                                 <small className="text-muted">Product</small>
                                             </div>
                                             <div className="user-progress">
-                                                <small className="fw-semibold">23.8k</small>
+                                                <small className="fw-semibold">{postProductTotal} post</small>
                                             </div>
                                         </div>
                                     </li>
                                     <li className="d-flex">
                                         <div className="avatar flex-shrink-0 me-3">
                                             <span className="avatar-initial rounded bg-label-info">
-                                                <BiHomeAlt />
+                                                <MdRoomService />
                                             </span>
                                         </div>
                                         <div className="d-flex w-100 flex-wrap align-items-center justify-content-start gap-2">
                                             <div className="me-2">
-                                                <h6 className="mb-0">Post</h6>
+                                                <h6 className="mb-0">Type</h6>
                                                 <small className="text-muted">Service</small>
                                             </div>
                                             <div className="user-progress">
-                                                <small className="fw-semibold">849k</small>
+                                                <small className="fw-semibold">{postServiceTotal} post</small>
                                             </div>
                                         </div>
                                     </li>

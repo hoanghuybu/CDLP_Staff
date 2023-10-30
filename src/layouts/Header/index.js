@@ -3,12 +3,12 @@ import images from '~/assets/images';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCircleQuestion,
-    faCoins,
+    // faCoins,
     faEarthAfrica,
     faEllipsisVertical,
-    faGear,
+    // faGear,
     faKeyboard,
-    faPlus,
+    // faPlus,
     faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -18,8 +18,8 @@ import Menu from '~/components/Popper/Menu';
 import 'tippy.js/dist/tippy.css';
 import { InboxIcon, MessageIcon } from '~/components/Icons';
 import Image from '~/components/Image';
-import Search from '../Search';
-import { Link } from 'react-router-dom';
+// import Search from '../Search';
+import { Link, useNavigate } from 'react-router-dom';
 import config from '~/config';
 
 const MENU_ITEMS = [
@@ -57,6 +57,7 @@ const MENU_ITEMS = [
 
 function Header() {
     const currentUser = true;
+    const navigate = useNavigate();
 
     const handleMenuOnChange = (menuItems) => {
         console.log(menuItems);
@@ -69,20 +70,8 @@ function Header() {
             to: '/@hhuy',
         },
         {
-            icon: <FontAwesomeIcon icon={faCoins}></FontAwesomeIcon>,
-            title: 'Get Coin',
-            to: '/coin',
-        },
-        {
-            icon: <FontAwesomeIcon icon={faGear}></FontAwesomeIcon>,
-            title: 'Setting',
-            to: '/setting',
-        },
-        ...MENU_ITEMS,
-        {
             icon: <FontAwesomeIcon icon={faSignOut}></FontAwesomeIcon>,
             title: 'Log out',
-            to: '/logout',
             separate: true,
         },
     ];
@@ -93,29 +82,39 @@ function Header() {
                 <Link to={config.route.home} className={styles.logo}>
                     <img className={styles.logoImage} src={images.CDLP_logo} alt="CDLP"></img>
                 </Link>
-                <Search></Search>
+                {/* <Search></Search> */}
                 <div className={styles.actions}>
                     {currentUser ? (
                         <>
-                            <Button text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
+                            {/* <Button text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
                                 Upload
-                            </Button>
-                            <Tippy delay={[0, 200]} content="Message" placement="bottom">
-                                <button className={styles.actionsBtn}>
+                            </Button> */}
+                            <Tippy delay={[0, 200]} content="User" placement="bottom">
+                                <button
+                                    onClick={() => {
+                                        navigate('/staff');
+                                    }}
+                                    className={styles.actionsBtn}
+                                >
                                     <MessageIcon></MessageIcon>
                                 </button>
                             </Tippy>
-                            <Tippy delay={[0, 200]} content="Inbox" placement="bottom">
-                                <button className={styles.actionsBtn}>
+                            <Tippy delay={[0, 200]} content="Post" placement="bottom">
+                                <button
+                                    onClick={() => {
+                                        navigate('/post');
+                                    }}
+                                    className={styles.actionsBtn}
+                                >
                                     <InboxIcon></InboxIcon>
                                 </button>
                             </Tippy>
                         </>
                     ) : (
                         <>
-                            <Button text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
+                            {/* <Button text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
                                 Upload
-                            </Button>
+                            </Button> */}
                             <Button primary>Login</Button>
                         </>
                     )}

@@ -7,7 +7,7 @@ function WhiteLayouts({ children }) {
                 <div className="d-flex header-logo">
                     <img src={images.CDLP_logo} alt="CDLP"></img>
                 </div>
-                <h2>Login Admin</h2>
+                <h2>Login Staff</h2>
                 <div className="d-flex"></div>
             </div>
             <div className="container-fluid h-100">{children}</div>

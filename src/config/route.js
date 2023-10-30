@@ -7,6 +7,7 @@ const route = {
     search: '/search',
     live: '/post',
     details: '/details',
+    userDetails: '/UserDetails',
 };
 
 export default route;

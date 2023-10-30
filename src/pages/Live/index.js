@@ -1,91 +1,117 @@
 import './Live.scss';
 import { Dropdown } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BallTriangle } from 'react-loader-spinner';
 
 function Live() {
-    const users = [
-        {
-            id: 1,
-            userName: 'User1',
-            gender: 'Male',
-            status: 'Active',
-            actions: ['Edit', 'Delete'],
-        },
-        {
-            id: 2,
-            userName: 'User2',
-            gender: 'Female',
-            status: 'Active',
-            actions: ['Edit', 'Delete'],
-        },
-        {
-            id: 3,
-            userName: 'User3',
-            gender: 'Male',
-            status: 'Inactive',
-            actions: ['Edit', 'Delete'],
-        },
-        {
-            id: 4,
-            userName: 'User4',
-            gender: 'Female',
-            status: 'Active',
-            actions: ['Edit', 'Delete'],
-        },
-        {
-            id: 5,
-            userName: 'User5',
-            gender: 'Male',
-            status: 'Active',
-            actions: ['Edit', 'Delete'],
-        },
-    ];
+    const [listPost, setListPost] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
+
+    const fecthListPost = async () => {
+        try {
+            const response = await fetch(
+                'https://beprn231cardogloverodata20231024085350.azurewebsites.net/odata/Posts?$expand=Gifts&$expand=Products&$expand=Services',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    },
+                },
+            );
+            if (response.ok) {
+                const responseData = await response.json();
+                setListPost(responseData.value);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleEditClick = (post) => {
+        navigate('/details', { state: { post: post } });
+    };
+
+    useEffect(() => {
+        fecthListPost();
+    }, []);
 
     return (
         <div className="content-wrapper">
             <div className="ontainer-xxl flex-grow-1 container-p-y">
+                <h4 className="fw-bold py-3 mb-4">
+                    <span className="text-muted fw-light">Post/</span> List Post
+                </h4>
                 <div className="card">
                     <div className="table-responsive text-nowrap">
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>User Name</th>
-                                    <th>Gender</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="table-border-bottom-0">
-                                {users.map((user, index) => (
-                                    <tr key={user.id}>
-                                        <td>{user.id}</td>
-                                        <td>{user.userName}</td>
-                                        <td>{user.gender}</td>
-                                        <td>
-                                            <span
-                                                className={`badge ${
-                                                    user.status === 'Active' ? 'bg-label-success' : 'bg-label-danger'
-                                                } me-1`}
-                                            >
-                                                {user.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <Dropdown>
-                                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                                    Select Actions
-                                                </Dropdown.Toggle>
-
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item href="/details">Edit</Dropdown.Item>
-                                                    <Dropdown.Item href="/details">Delete</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </td>
+                        {isLoading ? (
+                            <div className="col-auto d-flex align-items-center justify-content-center">
+                                <BallTriangle
+                                    height={100}
+                                    width={100}
+                                    radius={5}
+                                    color="rgba(105, 108, 255, 0.85)"
+                                    ariaLabel="ball-triangle-loading"
+                                    wrapperClass={{}}
+                                    wrapperStyle=""
+                                    visible={true}
+                                />
+                            </div>
+                        ) : (
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Title</th>
+                                        {/* <th>Content</th> */}
+                                        <th>Type</th>
+                                        <th>Owner Name</th>
+                                        <th>Create Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="table-border-bottom-0">
+                                    {listPost.map((post, index) => (
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td>{post?.Title}</td>
+                                            {/* <td style={{ whiteSpace: 'pre-wrap' }}>{post?.Content}</td> */}
+                                            <td>{post?.Type}</td>
+                                            <td>{post?.Owner?.FullName}</td>
+                                            <td>{post?.CreateDate.slice(0, 10)}</td>
+                                            <td>
+                                                <span
+                                                    className={`badge ${
+                                                        post.Status === true ? 'bg-label-success' : 'bg-label-danger'
+                                                    } me-1`}
+                                                >
+                                                    {post.Status === true ? 'Active' : 'InActive'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <Dropdown>
+                                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                        Select Actions
+                                                    </Dropdown.Toggle>
+
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item onClick={() => handleEditClick(post)}>
+                                                            Edit
+                                                        </Dropdown.Item>
+                                                        {/* <Dropdown.Item href="/details">Delete</Dropdown.Item> */}
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             </div>
