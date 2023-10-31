@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BiArrowBack, BiLogoGmail } from 'react-icons/bi';
+import { BiArrowBack, BiLogoGmail, BiSolidPhone } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import './Profile.scss';
 
@@ -11,8 +11,10 @@ function Profile() {
     const phoneRef = useRef();
     const descriptionRef = useRef();
     const [isSuccess, setIsSuccess] = useState(false);
+    const [uploadSuccess, setUploadSuccess] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState({});
+    const [avatar, setAvatar] = useState('');
 
     const handleRefresh = async () => {
         const refreshToken = sessionStorage.getItem('refreshToken');
@@ -41,6 +43,14 @@ function Profile() {
             }
         } else {
             navigate('/');
+        }
+    };
+
+    const handlePreviewAvatar = (e) => {
+        const file = e.target.files[0];
+        if (e.target.files.length !== 0) {
+            file.preview = URL.createObjectURL(file);
+            setAvatar(file);
         }
     };
 
@@ -112,9 +122,68 @@ function Profile() {
         }
     };
 
+    const uploadImage = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('file', avatar);
+            const response = await fetch(
+                'https://beprn231catdoglover20231030132717.azurewebsites.net/api/FireBase/UploadImageFile',
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            );
+            if (response.status === 200) {
+                const results = await response.text();
+                const updatedUser = {
+                    accountId: user.accountId,
+                    email: emailRef.current.value,
+                    fullName: fullNameRef.current.value,
+                    dateOfBirth: dateOfBirthRef.current.value === '' ? null : dateOfBirthRef.current.value,
+                    phone: phoneRef.current.value,
+                    address: addressRef.current.value,
+                    avatarLink: results,
+                    description: descriptionRef.current.value,
+                };
+                try {
+                    const response = await fetch(
+                        'https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account/UpdateProfile',
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                            },
+                            body: JSON.stringify(updatedUser),
+                        },
+                    );
+                    if (response.status === 200) {
+                        setUploadSuccess(true);
+                        const data = await response.json();
+                        setUser(data);
+                    }
+                } catch (error) {
+                    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                        await handleRefresh();
+                    } else {
+                        console.log(error);
+                    }
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            avatar && URL.revokeObjectURL(avatar.preview);
+        };
+    }, [avatar]);
+
     useEffect(() => {
         fetchUserById();
-    });
+    }, []);
     return (
         <div className="content-wrapper">
             <div className="container-xxl flex-grow-1 container-p-y">
@@ -145,7 +214,9 @@ function Profile() {
                                     <img
                                         className="center-block img img-responsive rounded-circle thumb96"
                                         src={
-                                            user.avatarLink
+                                            avatar && avatar.preview
+                                                ? avatar.preview
+                                                : user && user.avatarLink
                                                 ? user.avatarLink
                                                 : 'https://bootdey.com/img/Content/avatar/avatar1.png'
                                         }
@@ -154,14 +225,15 @@ function Profile() {
                                 </div>
                                 <h3 className="m-0 font-weight-bold">{user?.fullName}</h3>
                                 <div className="mt-lg">
-                                    <div>
-                                        <h4>
-                                            Phone: <small>{user?.phone}</small>
-                                        </h4>
-                                        <h4>
-                                            Email: <small>{user?.email}</small>
-                                        </h4>
+                                    <div className="mb-3 mt-2">
+                                        <input type="file" onChange={handlePreviewAvatar} className="form-control" />
                                     </div>
+                                    <div className="mb-1">
+                                        <button onClick={uploadImage} className="btn btn-outline-success">
+                                            Upload Image
+                                        </button>
+                                    </div>
+                                    {uploadSuccess && <h3 style={{ color: '#00AA00' }}>Update Success</h3>}
                                 </div>
                             </div>
                         </div>
@@ -171,14 +243,15 @@ function Profile() {
                                 <div className="row mb-3">
                                     <div className="col-sm-2">
                                         <BiLogoGmail className="media-object rounded-circle thumb48" />
-                                        {/* <img
-                                        className="media-object rounded-circle thumb48"
-                                        src='https://img.freepik.com/free-vector/cartoon-colorful-magic-gift-box-composition_91128-1030.jpg?w=826&t=st=1698229464~exp=1698230064~hmac=807848d8a330ea10b4469674edc7a5e1f33314f8d89156c149129b9231d6ca62'
-                                        alt="Contact"
-                                    /> */}
                                     </div>
-                                    <div className="col-sm-10">
+                                    <div className="col-sm-10 d-flex align-items-center">
                                         <div className="font-weight-bold pl-2">{user?.email}</div>
+                                    </div>
+                                    <div className="col-sm-2">
+                                        <BiSolidPhone className="media-object rounded-circle thumb48" />
+                                    </div>
+                                    <div className="col-sm-10 d-flex align-items-center">
+                                        <div className="font-weight-bold pl-2">{user?.phone}</div>
                                     </div>
                                 </div>
                             </div>
