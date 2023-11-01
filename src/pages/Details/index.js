@@ -9,6 +9,8 @@ function Details() {
     const [isSuccess, setIsSuccess] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const [isFailed, setIsFailed] = useState(false);
+    const [msgFailed, setMsgFailed] = useState('');
     const post = location?.state?.post;
     console.log(post);
 
@@ -61,7 +63,9 @@ function Details() {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
                 await handleRefresh();
             } else {
-                console.log(error);
+                const msg = `Error, please contact your administrator for assistance`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         }
     };
@@ -85,7 +89,9 @@ function Details() {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
                 await handleRefresh();
             } else {
-                console.log(error);
+                const msg = `Error, please contact your administrator for assistance`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         }
     };
@@ -325,6 +331,7 @@ function Details() {
                                                 Update Success please back to list to check{' '}
                                             </h3>
                                         )}
+                                        {isFailed && <h3 style={{ color: '#fe2c55' }}>{msgFailed}</h3>}
                                     </div>
                                 </div>
                             </div>

@@ -14,6 +14,8 @@ function UserDetails() {
     const banReasonRef = useRef();
     const [listPostItem, setListPostItem] = useState([]);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [isFailed, setIsFailed] = useState(false);
+    const [msgFailed, setMsgFailed] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const [currentPage, setCurrentPage] = useState(1);
@@ -105,6 +107,10 @@ function UserDetails() {
             );
             if (response.status === 200) {
                 setIsSuccess(true);
+            } else {
+                const msg = `Error ${response.status} : ${response.statusText}`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         } catch (error) {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -134,7 +140,9 @@ function UserDetails() {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
                 await handleRefresh();
             } else {
-                console.log(error);
+                const msg = `Error, please contact your administrator for assistance`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         }
     };
@@ -153,6 +161,10 @@ function UserDetails() {
             );
             if (response.status === 200) {
                 setIsSuccess(true);
+            } else {
+                const msg = `Error ${response.status}: ${response.statusText}`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         } catch (error) {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
@@ -476,6 +488,7 @@ function UserDetails() {
                                                 Update Success please back to list to check
                                             </h3>
                                         )}
+                                        {isFailed && <h3 style={{ color: '#fe2c55' }}>{msgFailed}</h3>}
                                     </div>
                                 </div>
                             </div>

@@ -41,7 +41,7 @@ function Report() {
     const fecthListReport = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/$metadata#Reports',
+                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Reports',
                 {
                     method: 'GET',
                     headers: {
@@ -52,6 +52,7 @@ function Report() {
             );
             if (response.ok) {
                 const responseData = await response.json();
+                console.log(responseData);
                 setListReport(responseData.value);
             }
         } catch (error) {
@@ -103,9 +104,9 @@ function Report() {
                                     {listReport?.map((report, index) => (
                                         <tr key={index}>
                                             <td>{index + 1}</td>
-                                            <td>{report?.reporter?.fullName}</td>
-                                            <td>{report?.reportedPerson?.fullName}</td>
-                                            <td>{report?.content}</td>
+                                            <td>{report?.ReporterId}</td>
+                                            <td>{report?.ReportedPersonId}</td>
+                                            <td>{report?.Content}</td>
                                         </tr>
                                     ))}
                                 </tbody>

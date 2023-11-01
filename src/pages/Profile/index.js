@@ -11,6 +11,8 @@ function Profile() {
     const phoneRef = useRef();
     const descriptionRef = useRef();
     const [isSuccess, setIsSuccess] = useState(false);
+    const [isFailed, setIsFailed] = useState(false);
+    const [msgFailed, setMsgFailed] = useState('');
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState({});
@@ -117,7 +119,9 @@ function Profile() {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
                 await handleRefresh();
             } else {
-                console.log(error);
+                const msg = `Error, please contact your administrator for assistance`;
+                setMsgFailed(msg);
+                setIsFailed(true);
             }
         }
     };
@@ -166,7 +170,9 @@ function Profile() {
                     if (error instanceof TypeError && error.message === 'Failed to fetch') {
                         await handleRefresh();
                     } else {
-                        console.log(error);
+                        const msg = `Error, please contact your administrator for assistance`;
+                        setMsgFailed(msg);
+                        setIsFailed(true);
                     }
                 }
             }
@@ -234,6 +240,7 @@ function Profile() {
                                         </button>
                                     </div>
                                     {uploadSuccess && <h3 style={{ color: '#00AA00' }}>Update Success</h3>}
+                                    {isFailed && <h3 style={{ color: '#fe2c55' }}>{msgFailed}</h3>}
                                 </div>
                             </div>
                         </div>
@@ -393,6 +400,7 @@ function Profile() {
                                             </div>
                                         </form>
                                         {isSuccess && <h3 style={{ color: '#00AA00' }}>Update Success</h3>}
+                                        {isFailed && <h3 style={{ color: '#fe2c55' }}>{msgFailed}</h3>}
                                     </div>
                                 </div>
                             </div>

@@ -67,7 +67,7 @@ function Header() {
         {
             icon: <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>,
             title: 'View Profile',
-            to: '/@hhuy',
+            to: '/@staff',
         },
         {
             icon: <FontAwesomeIcon icon={faSignOut}></FontAwesomeIcon>,
