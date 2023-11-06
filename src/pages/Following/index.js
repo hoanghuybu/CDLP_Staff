@@ -14,7 +14,7 @@ function Following() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231105200231.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -41,7 +41,7 @@ function Following() {
 
     const fetchListAccount = async () => {
         try {
-            const response = await fetch('https://beprn231catdoglover20231030132717.azurewebsites.net/api/Account', {
+            const response = await fetch('https://beprn231catdoglover20231105200231.azurewebsites.net/api/Account', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ function Following() {
             });
             if (response.status === 200) {
                 const responseData = await response.json();
-                const filteredAccounts = responseData.filter((account) => account.roleId === 1);
+                const filteredAccounts = responseData.filter((account) => account.roleId === 3);
                 setListAccount(filteredAccounts);
             }
         } catch (error) {

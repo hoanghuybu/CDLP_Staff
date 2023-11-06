@@ -8,7 +8,7 @@ import {
     faEllipsisVertical,
     // faGear,
     faKeyboard,
-    // faPlus,
+    faPlus,
     faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
@@ -86,9 +86,9 @@ function Header() {
                 <div className={styles.actions}>
                     {currentUser ? (
                         <>
-                            {/* <Button text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
-                                Upload
-                            </Button> */}
+                            <Button to="/CreateUser" text leftIcon={<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>}>
+                                Create
+                            </Button>
                             <Tippy delay={[0, 200]} content="User" placement="bottom">
                                 <button
                                     onClick={() => {

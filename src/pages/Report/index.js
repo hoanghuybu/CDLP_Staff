@@ -13,7 +13,7 @@ function Report() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231105200231.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -41,7 +41,7 @@ function Report() {
     const fecthListReport = async () => {
         try {
             const response = await fetch(
-                'https://beprn231cardogloverodata20231030114819.azurewebsites.net/odata/Reports',
+                'https://beprn231cardogloverodata20231105200328.azurewebsites.net/odata/Reports',
                 {
                     method: 'GET',
                     headers: {
@@ -52,7 +52,7 @@ function Report() {
             );
             if (response.ok) {
                 const responseData = await response.json();
-                console.log(responseData);
+                // console.log(responseData);
                 setListReport(responseData.value);
             }
         } catch (error) {
@@ -104,8 +104,8 @@ function Report() {
                                     {listReport?.map((report, index) => (
                                         <tr key={index}>
                                             <td>{index + 1}</td>
-                                            <td>{report?.ReporterId}</td>
-                                            <td>{report?.ReportedPersonId}</td>
+                                            <td>{report?.Reporter?.Email}</td>
+                                            <td>{report?.ReportedPerson?.Email}</td>
                                             <td>{report?.Content}</td>
                                         </tr>
                                     ))}

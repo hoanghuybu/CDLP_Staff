@@ -6,6 +6,7 @@ import Live from '~/pages/Live';
 import LoginPage from '~/pages/Login';
 import Details from '~/pages/Details';
 import UserDetails from '~/pages/Details/UserDetails';
+import CreateUser from '~/pages/CreateUser';
 import { HeaderOnly, WhiteLayouts } from '~/layouts';
 import Report from '~/pages/Report';
 import config from '~/config';
@@ -21,6 +22,7 @@ const privateRounter = [
     { path: config.route.report, component: Report },
     { path: config.route.details, component: Details, layouts: HeaderOnly },
     { path: config.route.userDetails, component: UserDetails, layouts: HeaderOnly },
+    { path: config.route.createUser, component: CreateUser, layouts: HeaderOnly },
 ];
 
 export { privateRounter, publicRounter };

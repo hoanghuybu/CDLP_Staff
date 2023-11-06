@@ -19,7 +19,7 @@ function Details() {
         if (refreshToken) {
             try {
                 const response = await fetch(
-                    `https://beprn231catdoglover20231030132717.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
+                    `https://beprn231catdoglover20231105200231.azurewebsites.net/api/Auth/RefreshToken/${refreshToken}`,
                     {
                         method: 'GET',
                         headers: {
@@ -47,7 +47,7 @@ function Details() {
     const handleActivePost = async () => {
         try {
             const response = await fetch(
-                `https://beprn231cardogloverodata20231030114819.azurewebsites.net/Posts/Enable/${post.PostId}`,
+                `https://beprn231cardogloverodata20231105200328.azurewebsites.net/Posts/Enable/${post.PostId}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -73,7 +73,7 @@ function Details() {
     const handleInactivePost = async () => {
         try {
             const response = await fetch(
-                `https://beprn231cardogloverodata20231030114819.azurewebsites.net/Posts/Disable/${post.PostId}`,
+                `https://beprn231cardogloverodata20231105200328.azurewebsites.net/Posts/Disable/${post.PostId}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -193,7 +193,12 @@ function Details() {
                                         </div>
                                         <div className="col-sm-10">
                                             <div className="font-weight-bold">
-                                                {item?.Name}
+                                                <div className="d-flex justify-content-between">
+                                                    <div>{item?.Name}</div>
+                                                    <div>
+                                                        {item?.Price} {item.Price && 'VND'}
+                                                    </div>
+                                                </div>
                                                 <div className="text-muted">{item?.Description}</div>
                                             </div>
                                         </div>

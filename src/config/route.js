@@ -9,6 +9,7 @@ const route = {
     details: '/details',
     userDetails: '/UserDetails',
     report: '/report',
+    createUser: '/CreateUser',
 };
 
 export default route;
