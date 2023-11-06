@@ -190,6 +190,9 @@ function UserDetails() {
                 },
             );
             if (response.status === 200) {
+                if (isFailed === true) {
+                    setIsFailed(false);
+                }
                 setIsSuccess(true);
             } else {
                 const msg = 'Please input Ban Reason before the Ban';
